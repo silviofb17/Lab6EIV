@@ -49,8 +49,9 @@ struct clock_s {
     clock_time_t current_time;
     clock_time_t alarm_time;
     bool valid_time;
+    bool alarm_enabled;        
     uint16_t ticks_per_second;
-    uint16_t tick_counter; 
+    uint16_t tick_counter;
 };
 
 /* === Public variable definition  ============================================================= */
@@ -65,12 +66,13 @@ clock_t RelojCreate(uint16_t ticks_por_segundo, void * callback){
     clock_t self = malloc(sizeof(struct clock_s));
     if(self != NULL){
         self->valid_time = false;
+        self->alarm_enabled = false;
         self->ticks_per_second = ticks_por_segundo;
         self->tick_counter = 0;                     
         memset(&(self->current_time), 0, sizeof(clock_time_t));
         memset(&(self->alarm_time), 0, sizeof(clock_time_t));
     }
-    return self;
+    return self; //
 }
 
 bool GetCurrentTime(clock_t reloj, hora_t hora_actual){
@@ -157,6 +159,19 @@ bool GetAlarmTime(clock_t reloj, hora_t alarma_actual) {
     }
     memcpy(alarma_actual, reloj->alarm_time.bcd, sizeof(hora_t));
     return true;
+}
+
+void SetAlarmEnabled(clock_t reloj, bool estado) {
+    if (reloj != NULL) {
+        reloj->alarm_enabled = estado;
+    }
+}
+
+bool IsAlarmEnabled(clock_t reloj) {
+    if (reloj == NULL) {
+        return false;
+    }
+    return reloj->alarm_enabled;
 }
 
 /* === End of documentation ==================================================================== */

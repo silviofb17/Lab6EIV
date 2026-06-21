@@ -85,6 +85,12 @@ bool SetAlarmTime(clock_t reloj, hora_t nueva_alarma);
 // Función para obtener la hora de la alarma
 bool GetAlarmTime(clock_t reloj, hora_t alarma_actual);
 
+// Función para habilitar o deshabilitar la alarma
+void SetAlarmEnabled(clock_t reloj, bool estado);
+
+// Función para consultar si la alarma está habilitada
+bool IsAlarmEnabled(clock_t reloj);
+
 /* === End of conditional blocks =================================================================================== */
 
 #ifdef __cplusplus

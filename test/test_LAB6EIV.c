@@ -120,3 +120,21 @@ void test_fijar_y_consultar_alarma(void) {
     TEST_ASSERT_TRUE(get_ok);
     TEST_ASSERT_EQUAL_UINT8_ARRAY(alarma_esperada, alarma_consultada, 6);
 }
+
+// TEST 7- Se puede habilitar y deshabilitar la alarma, y consultar su estado correctamente.
+void test_habilitar_y_deshabilitar_alarma(void) {
+    clock_t reloj;
+
+    reloj = RelojCreate(1, NULL);
+
+    // Por defecto, la alarma debería iniciar deshabilitada
+    TEST_ASSERT_FALSE(IsAlarmEnabled(reloj));
+
+    // La habilitamos y comprobamos
+    SetAlarmEnabled(reloj, true);
+    TEST_ASSERT_TRUE(IsAlarmEnabled(reloj));
+
+    // La deshabilitamos y comprobamos
+    SetAlarmEnabled(reloj, false);
+    TEST_ASSERT_FALSE(IsAlarmEnabled(reloj));
+}
