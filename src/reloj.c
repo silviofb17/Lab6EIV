@@ -105,13 +105,33 @@ void ClockTick(clock_t reloj) {
     reloj->tick_counter++;
 
     if (reloj->tick_counter >= reloj->ticks_per_second) {
-        reloj->tick_counter = 0;
+        reloj->tick_counter = 0; //
 
         reloj->current_time.bcd[5]++;
 
         if (reloj->current_time.bcd[5] > 9) {
-            reloj->current_time.bcd[5] = 0;
+            reloj->current_time.bcd[5] = 0; 
             reloj->current_time.bcd[4]++;
+
+            if (reloj->current_time.bcd[4] > 5) {
+                reloj->current_time.bcd[4] = 0;
+                reloj->current_time.bcd[3]++; 
+
+                if (reloj->current_time.bcd[3] > 9) {
+                    reloj->current_time.bcd[3] = 0;
+                    reloj->current_time.bcd[2]++; 
+
+                    if (reloj->current_time.bcd[2] > 5) {
+                        reloj->current_time.bcd[2] = 0;
+                        reloj->current_time.bcd[1]++; 
+
+                        if (reloj->current_time.bcd[1] > 9) {
+                            reloj->current_time.bcd[1] = 0;
+                            reloj->current_time.bcd[0]++;
+                        }
+                    }
+                }
+            }
         }
     }
 }

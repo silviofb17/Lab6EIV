@@ -63,3 +63,22 @@ void test_reloj_avanza_un_segundo(void) {
     
     TEST_ASSERT_EQUAL_UINT8_ARRAY(hora_esperada, hora_actual, 6);
 }
+
+// TEST 4- El reloj avanza un minuto completo de manera correcta (00:00:59 -> 00:01:00)
+void test_reloj_avanza_un_minuto(void) {
+    clock_t reloj;
+    hora_t hora_actual;
+
+    uint8_t hora_inicial[6]  = {0, 0, 0, 0, 5, 9}; // 00:00:59
+    uint8_t hora_esperada[6] = {0, 0, 0, 1, 0, 0}; // 00:01:00
+
+    // Configurado a 1 tick por segundo para hacerlo simple
+    reloj = RelojCreate(1, NULL);
+    SetCurrentTime(reloj, hora_inicial);
+
+    // Un solo tick debería desbordan los segundos e incrementar el minuto
+    ClockTick(reloj);
+    GetCurrentTime(reloj, hora_actual);
+    
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(hora_esperada, hora_actual, 6);
+}
