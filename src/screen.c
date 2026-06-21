@@ -47,13 +47,13 @@ SPDX-License-Identifier: MIT
 
 struct display_s {
     uint8_t digits;                                 /**< Cantidad de digitos en la pantalla */
-    uint8_t active_digit;                         /**< Indice del digito activo en el barrido */
+    uint8_t active_digit;                           /**< Indice del digito activo en el barrido */
     uint8_t flashing_from;                          /**< Primer digito con parpadeo habilitado */
     uint8_t flashing_to;                            /**< Ultimo digito con parpadeo habilitado */
     uint16_t flashing_frecuency;                    /**< Divisdor de frecuencia para el parpadeo */
     uint16_t flashing_count;                        /**< Contador de ciclos de refresco para parpadeo */
     uint8_t display_memory [DISPLAY_MAX_DIGITS];    /**< Patron de segmentos por digito */
-    struct display_driver_s driver[1];              /**< Callbacks de acceso al hardware */
+    struct display_driver_s driver;                 /**< Driver de bajo nivel para el control de la pantalla */
 };
 
 /* === Private function declarations =========================================================== */
@@ -99,9 +99,11 @@ display_t DisplayCreate(uint8_t digits, display_driver_t driver) {
         display->flashing_from = 0;
         display->flashing_to = 0;
         display->flashing_frecuency = 0;
-        memcpy(display->driver, driver, sizeof(display->driver));
+        
+        memcpy(&(display->driver), driver, sizeof(struct display_driver_s)); 
         memset(display->display_memory, 0, sizeof(display->display_memory));
-        display->driver->UpdateSegments(0x00);
+        
+        display->driver.UpdateSegments(0x00); 
     }
 
     return display;
@@ -120,7 +122,7 @@ void DisplayWriteBCD(display_t display, uint8_t * number, uint8_t size) {
 void DisplayRefresh(display_t display) {
     uint8_t segments;
 
-    display->driver->UpdateSegments(0x00);
+    display->driver.UpdateSegments(0x00);
     display->active_digit = (display->active_digit + 1) % display->digits;
 
     if (display->active_digit == 0) {
@@ -139,8 +141,8 @@ void DisplayRefresh(display_t display) {
         }
     }
 
-    display->driver->UpdateSegments(segments);
-    display->driver->UpdateDigits(display->active_digit);
+    display->driver.UpdateSegments(segments);
+    display->driver.UpdateDigits(display->active_digit);
 }
 
 void DisplayFlashDigits(display_t display, uint8_t from, uint8_t to, uint16_t frecuency) {
