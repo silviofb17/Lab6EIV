@@ -79,6 +79,12 @@ bool SetCurrentTime(clock_t reloj, hora_t nueva_hora);
 // Función para procesar cada tick del sistema
 void ClockTick(clock_t reloj);
 
+// Funciones para manejar la alarma
+bool SetAlarmTime(clock_t reloj, hora_t nueva_alarma);
+
+// Función para obtener la hora de la alarma
+bool GetAlarmTime(clock_t reloj, hora_t alarma_actual);
+
 /* === End of conditional blocks =================================================================================== */
 
 #ifdef __cplusplus

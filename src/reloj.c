@@ -47,9 +47,10 @@ SPDX-License-Identifier: MIT
 
 struct clock_s {
     clock_time_t current_time;
+    clock_time_t alarm_time;
     bool valid_time;
-    uint16_t ticks_per_second; 
-    uint16_t tick_counter;
+    uint16_t ticks_per_second;
+    uint16_t tick_counter; 
 };
 
 /* === Public variable definition  ============================================================= */
@@ -64,11 +65,12 @@ clock_t RelojCreate(uint16_t ticks_por_segundo, void * callback){
     clock_t self = malloc(sizeof(struct clock_s));
     if(self != NULL){
         self->valid_time = false;
-        self->ticks_per_second = ticks_por_segundo; 
-        self->tick_counter = 0;
-        memset(&(self->current_time), 0, sizeof(clock_time_t)); //
+        self->ticks_per_second = ticks_por_segundo;
+        self->tick_counter = 0;                     
+        memset(&(self->current_time), 0, sizeof(clock_time_t));
+        memset(&(self->alarm_time), 0, sizeof(clock_time_t));
     }
-    return self; //
+    return self;
 }
 
 bool GetCurrentTime(clock_t reloj, hora_t hora_actual){
@@ -140,5 +142,21 @@ void ClockTick(clock_t reloj) {
             reloj->current_time.bcd[1] = 0;
         }
     }
+
+bool SetAlarmTime(clock_t reloj, hora_t nueva_alarma) {
+    if (reloj == NULL || nueva_alarma == NULL) {
+        return false;
+    }
+    memcpy(reloj->alarm_time.bcd, nueva_alarma, sizeof(hora_t));
+    return true;
+}
+
+bool GetAlarmTime(clock_t reloj, hora_t alarma_actual) {
+    if (reloj == NULL || alarma_actual == NULL) {
+        return false;
+    }
+    memcpy(alarma_actual, reloj->alarm_time.bcd, sizeof(hora_t));
+    return true;
+}
 
 /* === End of documentation ==================================================================== */

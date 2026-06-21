@@ -100,3 +100,23 @@ void test_reloj_resetea_a_medianoche(void) {
     
     TEST_ASSERT_EQUAL_UINT8_ARRAY(hora_esperada, hora_actual, 6);
 }
+
+// TEST 6- Se puede fijar la hora de la alarma y consultarla correctamente.
+void test_fijar_y_consultar_alarma(void) {
+    clock_t reloj;
+    hora_t alarma_consultada;
+
+    uint8_t alarma_a_fijar[6]  = {0, 7, 3, 0, 0, 0}; // 07:30:00
+    uint8_t alarma_esperada[6] = {0, 7, 3, 0, 0, 0};
+
+    reloj = RelojCreate(1, NULL);
+
+    // Fijamos la alarma (va a fallar la compilación porque no existe la función)
+    bool set_ok = SetAlarmTime(reloj, alarma_a_fijar);
+    TEST_ASSERT_TRUE(set_ok);
+
+    // Consultamos la alarma para verificar que coincida
+    bool get_ok = GetAlarmTime(reloj, alarma_consultada);
+    TEST_ASSERT_TRUE(get_ok);
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(alarma_esperada, alarma_consultada, 6);
+}
