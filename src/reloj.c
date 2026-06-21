@@ -48,6 +48,8 @@ SPDX-License-Identifier: MIT
 struct clock_s {
     clock_time_t current_time;
     bool valid_time;
+    uint16_t ticks_per_second; 
+    uint16_t tick_counter;
 };
 
 /* === Public variable definition  ============================================================= */
@@ -56,16 +58,17 @@ struct clock_s {
 
 /* === Public function implementation ========================================================== */
 
-clock_t RelojCreate(unsigned int ticks_por_segundo, void * alarm_handler){
-    (void)ticks_por_segundo;
-    (void)alarm_handler;
+clock_t RelojCreate(uint16_t ticks_por_segundo, void * callback){
+    (void)callback; 
 
     clock_t self = malloc(sizeof(struct clock_s));
     if(self != NULL){
         self->valid_time = false;
-        memset(&(self->current_time), 0, sizeof(clock_time_t));
+        self->ticks_per_second = ticks_por_segundo; 
+        self->tick_counter = 0;
+        memset(&(self->current_time), 0, sizeof(clock_time_t)); //
     }
-    return self;
+    return self; //
 }
 
 bool GetCurrentTime(clock_t reloj, hora_t hora_actual){
@@ -92,6 +95,25 @@ bool SetCurrentTime(clock_t reloj, hora_t nueva_hora) {
     reloj->valid_time = true;
     
     return true;
+}
+
+void ClockTick(clock_t reloj) {
+    if (reloj == NULL || !reloj->valid_time) {
+        return;
+    }
+
+    reloj->tick_counter++;
+
+    if (reloj->tick_counter >= reloj->ticks_per_second) {
+        reloj->tick_counter = 0;
+
+        reloj->current_time.bcd[5]++;
+
+        if (reloj->current_time.bcd[5] > 9) {
+            reloj->current_time.bcd[5] = 0;
+            reloj->current_time.bcd[4]++;
+        }
+    }
 }
 
 /* === End of documentation ==================================================================== */

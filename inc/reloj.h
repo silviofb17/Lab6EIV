@@ -68,13 +68,16 @@ typedef uint8_t hora_t[6];
 /* === Public function declarations ================================================================================ */
 
 // Función para crear un nuevo reloj
-clock_t RelojCreate(unsigned int ticks_por_segundo, void * alarm_handler);
+clock_t RelojCreate(uint16_t ticks_por_segundo, void * alarm_handler);
 
 // Función para obtener la hora actual del reloj
 bool GetCurrentTime(clock_t reloj, hora_t hora_actual);
 
 // Función para ajustar la hora del reloj
 bool SetCurrentTime(clock_t reloj, hora_t nueva_hora);
+
+// Función para procesar cada tick del sistema
+void ClockTick(clock_t reloj);
 
 /* === End of conditional blocks =================================================================================== */
 

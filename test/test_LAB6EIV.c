@@ -38,3 +38,28 @@ void test_ajustar_hora_valida(void) {
     TEST_ASSERT_TRUE(es_valida);
     TEST_ASSERT_EQUAL_UINT8_ARRAY(hora_esperada, hora_actual, 6);
 }
+
+// TEST 3- El reloj avanza un segundo al recibir la cantidad configurada de ticks.
+void test_reloj_avanza_un_segundo(void) {
+    clock_t reloj;
+    hora_t hora_actual;
+
+    uint8_t hora_inicial[6]  = {1, 2, 0, 0, 0, 0}; // 12:00:00
+    uint8_t hora_esperada[6] = {1, 2, 0, 0, 0, 1}; // 12:00:01
+
+    // Creamos el reloj configurado para avanzar 1 segundo cada 5 ticks
+    reloj = RelojCreate(5, NULL);
+    SetCurrentTime(reloj, hora_inicial);
+
+    // Simulamos 4 ticks: la hora NO debería cambiar todavía
+    for (int i = 0; i < 4; i++) {
+        ClockTick(reloj);
+    }
+    GetCurrentTime(reloj, hora_actual);
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(hora_inicial, hora_actual, 6);
+
+    ClockTick(reloj);
+    GetCurrentTime(reloj, hora_actual);
+    
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(hora_esperada, hora_actual, 6);
+}
