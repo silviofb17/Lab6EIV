@@ -68,7 +68,7 @@ clock_t RelojCreate(unsigned int ticks_por_segundo, void * alarm_handler){
     return self;
 }
 
-bool RelojGetCurrentTime(clock_t reloj, hora_t hora_actual){
+bool GetCurrentTime(clock_t reloj, hora_t hora_actual){
     if(reloj == NULL || hora_actual == NULL){
         return false;
     }
@@ -79,6 +79,18 @@ bool RelojGetCurrentTime(clock_t reloj, hora_t hora_actual){
     }
 
     memcpy(hora_actual, reloj->current_time.bcd, sizeof(hora_t));
+    return true;
+}
+
+bool SetCurrentTime(clock_t reloj, hora_t nueva_hora) {
+    if (reloj == NULL || nueva_hora == NULL) {
+        return false;
+    }
+    
+    memcpy(reloj->current_time.bcd, nueva_hora, sizeof(hora_t));
+   
+    reloj->valid_time = true;
+    
     return true;
 }
 

@@ -45,6 +45,7 @@ extern "C" {
 #endif
 
 /* === Public macros definitions =================================================================================== */
+
 typedef union {
     struct {
         uint8_t hours[2];
@@ -56,17 +57,24 @@ typedef union {
 
 /* === Public data type declarations =============================================================================== */
 
+// Declaración de la estructura del reloj (definida en reloj.c)
 typedef struct clock_s * clock_t;
 
+// Tipo para representar la hora en formato BCD (6 dígitos: HHMMSS)
 typedef uint8_t hora_t[6];
 
 /* === Public variable declarations ================================================================================ */
 
 /* === Public function declarations ================================================================================ */
 
+// Función para crear un nuevo reloj
 clock_t RelojCreate(unsigned int ticks_por_segundo, void * alarm_handler);
 
-bool RelojGetCurrentTime(clock_t reloj, hora_t hora_actual);
+// Función para obtener la hora actual del reloj
+bool GetCurrentTime(clock_t reloj, hora_t hora_actual);
+
+// Función para ajustar la hora del reloj
+bool SetCurrentTime(clock_t reloj, hora_t nueva_hora);
 
 /* === End of conditional blocks =================================================================================== */
 

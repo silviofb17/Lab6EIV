@@ -11,7 +11,7 @@ void test_reloj_inicial_invalido(void){
     bool es_valida;
 
     reloj = RelojCreate(1 ,NULL);
-    es_valida = RelojGetCurrentTime(reloj, hora_actual);
+    es_valida = GetCurrentTime(reloj, hora_actual);
     TEST_ASSERT_FALSE(es_valida);
     TEST_ASSERT_EQUAL_UINT8_ARRAY(INITIAL_TIME, hora_actual, 6);
 }
@@ -22,7 +22,7 @@ void test_ajustar_hora_valida(void) {
     hora_t hora_actual; //
     bool es_valida;
 
-    // 12:34:56 en formato BCD sin compactar (como pide el enunciado)
+    // 12:34:56 en formato BCD sin compactar
     uint8_t hora_a_ajustar[6] = {1, 2, 3, 4, 5, 6}; 
     uint8_t hora_esperada[6]  = {1, 2, 3, 4, 5, 6};
 
