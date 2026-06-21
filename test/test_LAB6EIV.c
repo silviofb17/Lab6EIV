@@ -138,3 +138,48 @@ void test_habilitar_y_deshabilitar_alarma(void) {
     SetAlarmEnabled(reloj, false);
     TEST_ASSERT_FALSE(IsAlarmEnabled(reloj));
 }
+
+// Variable global simulada para contar cuántas veces sonó la alarma en el test
+static int alarma_sonada_veces = 0;
+
+// Función Callback de mentira para el entorno de pruebas
+void MiCallbackAlarma(clock_t reloj) {
+    (void)reloj;
+    alarma_sonada_veces++;
+}
+
+// TEST 8- Alarma habilitada y la hora coincide, se debe ejecutar el evento (Callback).
+void test_alarma_habilitada_y_coincide_dispara_callback(void) {
+    clock_t reloj;
+    uint8_t hora[6] = {0, 7, 3, 0, 0, 0};    // 07:30:00
+
+    alarma_sonada_veces = 0; 
+
+    // Creamos el reloj pasándole nuestro callback de prueba
+    reloj = RelojCreate(1, MiCallbackAlarma);
+    SetCurrentTime(reloj, hora);
+    SetAlarmTime(reloj, hora); // Alarma seteada a la misma hora: 07:30:00
+    SetAlarmEnabled(reloj, true);
+
+    // Forzamos un tick, al coincidir la hora y estar habilitada, debe llamar al callback
+    ClockTick(reloj);
+
+    TEST_ASSERT_EQUAL_INT(1, alarma_sonada_veces);
+}
+
+// TEST 9- Alarma deshabilitada aunque la hora coincida, no se debe ejecutar el evento.
+void test_alarma_deshabilitada_y_coincide_no_dispara_callback(void) {
+    clock_t reloj;
+    uint8_t hora[6] = {0, 7, 3, 0, 0, 0};    // 07:30:00
+
+    alarma_sonada_veces = 0;
+
+    reloj = RelojCreate(1, MiCallbackAlarma);
+    SetCurrentTime(reloj, hora);
+    SetAlarmTime(reloj, hora);
+    SetAlarmEnabled(reloj, false);
+
+    ClockTick(reloj);
+
+    TEST_ASSERT_EQUAL_INT(0, alarma_sonada_veces);
+}

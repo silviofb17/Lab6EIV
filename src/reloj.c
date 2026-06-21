@@ -49,9 +49,10 @@ struct clock_s {
     clock_time_t current_time;
     clock_time_t alarm_time;
     bool valid_time;
-    bool alarm_enabled;        
-    uint16_t ticks_per_second;
-    uint16_t tick_counter;
+    bool alarm_enabled;       
+    uint16_t ticks_per_second; 
+    uint16_t tick_counter;    
+    clock_event_handler_t alarm_handler;
 };
 
 /* === Public variable definition  ============================================================= */
@@ -60,19 +61,18 @@ struct clock_s {
 
 /* === Public function implementation ========================================================== */
 
-clock_t RelojCreate(uint16_t ticks_por_segundo, void * callback){
-    (void)callback; 
-
+clock_t RelojCreate(uint16_t ticks_por_segundo, clock_event_handler_t callback){
     clock_t self = malloc(sizeof(struct clock_s));
     if(self != NULL){
         self->valid_time = false;
-        self->alarm_enabled = false;
+        self->alarm_enabled = false; 
         self->ticks_per_second = ticks_por_segundo;
-        self->tick_counter = 0;                     
+        self->tick_counter = 0;                    
+        self->alarm_handler = callback;
         memset(&(self->current_time), 0, sizeof(clock_time_t));
         memset(&(self->alarm_time), 0, sizeof(clock_time_t));
     }
-    return self; //
+    return self;
 }
 
 bool GetCurrentTime(clock_t reloj, hora_t hora_actual){
@@ -111,6 +111,12 @@ void ClockTick(clock_t reloj) {
     if (reloj->tick_counter >= reloj->ticks_per_second) {
         reloj->tick_counter = 0;
 
+        if (reloj->alarm_enabled && reloj->alarm_handler != NULL) {
+            if (memcmp(reloj->current_time.bcd, reloj->alarm_time.bcd, sizeof(hora_t)) == 0) {
+                reloj->alarm_handler(reloj); 
+            }
+        }
+
         reloj->current_time.bcd[5]++;
 
         if (reloj->current_time.bcd[5] > 9) {
@@ -125,7 +131,7 @@ void ClockTick(clock_t reloj) {
                     reloj->current_time.bcd[3] = 0;
                     reloj->current_time.bcd[2]++;
 
-                    if (reloj->current_time.bcd[2] > 5) 
+                    if (reloj->current_time.bcd[2] > 5) {
                         reloj->current_time.bcd[2] = 0;
                         reloj->current_time.bcd[1]++;
 
@@ -138,12 +144,12 @@ void ClockTick(clock_t reloj) {
             }
         }
 
-        // Control de medianochee
         if (reloj->current_time.bcd[0] == 2 && reloj->current_time.bcd[1] == 4) {
-            reloj->current_time.bcd[0] = 0; 
+            reloj->current_time.bcd[0] = 0;
             reloj->current_time.bcd[1] = 0;
         }
     }
+}
 
 bool SetAlarmTime(clock_t reloj, hora_t nueva_alarma) {
     if (reloj == NULL || nueva_alarma == NULL) {
