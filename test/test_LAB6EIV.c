@@ -82,3 +82,21 @@ void test_reloj_avanza_un_minuto(void) {
     
     TEST_ASSERT_EQUAL_UINT8_ARRAY(hora_esperada, hora_actual, 6);
 }
+
+// TEST 5- El reloj se resetea correctamente a la medianoche (23:59:59 -> 00:00:00)
+void test_reloj_resetea_a_medianoche(void) {
+    clock_t reloj;
+    hora_t hora_actual;
+
+    uint8_t hora_inicial[6]  = {2, 3, 5, 9, 5, 9}; // 23:59:59
+    uint8_t hora_esperada[6] = {0, 0, 0, 0, 0, 0}; // 00:00:00
+
+    reloj = RelojCreate(1, NULL);
+    SetCurrentTime(reloj, hora_inicial);
+
+    // Un tick extra debería disparar el desborde completo hasta las 00:00:00
+    ClockTick(reloj);
+    GetCurrentTime(reloj, hora_actual);
+    
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(hora_esperada, hora_actual, 6);
+}
