@@ -180,4 +180,37 @@ bool IsAlarmEnabled(clock_t reloj) {
     return reloj->alarm_enabled;
 }
 
+bool PostponeAlarm(clock_t reloj, uint8_t minutos) {
+    if (reloj == NULL || minutos == 0) {
+        return false;
+    }
+
+    uint8_t min_unidades = minutos % 10;
+    uint8_t min_decenas = minutos / 10;
+
+    reloj->alarm_time.bcd[3] += min_unidades;
+    if (reloj->alarm_time.bcd[3] > 9) {
+        reloj->alarm_time.bcd[3] -= 10;
+        reloj->alarm_time.bcd[2]++;
+    }
+
+    reloj->alarm_time.bcd[2] += min_decenas;
+    if (reloj->alarm_time.bcd[2] > 5) {
+        reloj->alarm_time.bcd[2] -= 6;
+        reloj->alarm_time.bcd[1]++; 
+
+        if (reloj->alarm_time.bcd[1] > 9) {
+            reloj->alarm_time.bcd[1] = 0;
+            reloj->alarm_time.bcd[0]++; 
+        }
+    }
+
+    if (reloj->alarm_time.bcd[0] == 2 && reloj->alarm_time.bcd[1] == 4) {
+        reloj->alarm_time.bcd[0] = 0;
+        reloj->alarm_time.bcd[1] = 0;
+    }
+
+    return true;
+}
+
 /* === End of documentation ==================================================================== */

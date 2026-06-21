@@ -94,6 +94,9 @@ void SetAlarmEnabled(clock_t reloj, bool estado);
 // Función para consultar si la alarma está habilitada
 bool IsAlarmEnabled(clock_t reloj);
 
+// Función para posponer la alarma una cierta cantidad de minutos
+bool PostponeAlarm(clock_t reloj, uint8_t minutos);
+
 /* === End of conditional blocks =================================================================================== */
 
 #ifdef __cplusplus

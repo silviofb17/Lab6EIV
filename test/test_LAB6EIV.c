@@ -183,3 +183,24 @@ void test_alarma_deshabilitada_y_coincide_no_dispara_callback(void) {
 
     TEST_ASSERT_EQUAL_INT(0, alarma_sonada_veces);
 }
+
+// TEST 10- Se puede posponer la alarma por una cantidad de minutos determinada.
+void test_posponer_alarma_minutos(void) {
+    clock_t reloj;
+    hora_t alarma_consultada;
+
+    uint8_t hora_inicial[6]    = {0, 7, 3, 0, 0, 0}; // 07:30:00
+    uint8_t alarma_esperada[6] = {0, 7, 3, 5, 0, 0}; // Pospuesta 5 minutos -> 07:35:00
+
+    reloj = RelojCreate(1, MiCallbackAlarma);
+    SetCurrentTime(reloj, hora_inicial);
+    SetAlarmTime(reloj, hora_inicial);
+    SetAlarmEnabled(reloj, true);
+
+    // Posponemos la alarma 5 minutos (esto va a fallar la compilación porque no existe la función)
+    bool postpone_ok = PostponeAlarm(reloj, 5);
+    TEST_ASSERT_TRUE(postpone_ok);
+
+    GetAlarmTime(reloj, alarma_consultada);
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(alarma_esperada, alarma_consultada, 6);
+}
