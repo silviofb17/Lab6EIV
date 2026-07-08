@@ -1,0 +1,17 @@
+[33mc4c8e22[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;33mtag: [m[1;33mtp7[m[33m, [m[1;31morigin/master[m[33m)[m HEAD@{0}: reset: moving to 71c26a7~1
+[33mc4c8e22[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;33mtag: [m[1;33mtp7[m[33m, [m[1;31morigin/master[m[33m)[m HEAD@{1}: reset: moving to HEAD~1
+[33m71c26a7[m HEAD@{2}: commit: Se agrega el Lab 4 al repositorio
+[33mc4c8e22[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;33mtag: [m[1;33mtp7[m[33m, [m[1;31morigin/master[m[33m)[m HEAD@{3}: commit: Pequeñas correcciones y al laboratorio completado
+[33m5116dbb[m HEAD@{4}: commit: TDD: Implementada funcion PostponeAlarm, Test 10 pasa. Laboratorio completado
+[33mbe7bb5a[m HEAD@{5}: commit: TDD: Corregido timing de alarma en ClockTick, Tests 8 y 9 pasan
+[33med8afde[m HEAD@{6}: commit: TDD: Implementadas funciones SetAlarmEnabled e IsAlarmEnabled, Test 7 pasa
+[33m386b8c0[m HEAD@{7}: commit: TDD: Implementadas funciones SetAlarmTime y GetAlarmTime, Test 6 pasa
+[33m5fc3ab7[m HEAD@{8}: commit: TDD: Corregido tipo en ClockTick, Test 5 pasaa
+[33m9a8af19[m HEAD@{9}: commit: TDD: Implementado desborde BCD de segundos a minutos, Test 4 pasa
+[33m23e6335[m HEAD@{10}: commit: TDD: Implementada funcion ClockTick y avance de segundos, Test 3 pasa
+[33m2a743aa[m HEAD@{11}: commit: TDD: Implementada funcion SetCurrentTime, Test 2 pasa
+[33m6eee82f[m HEAD@{12}: commit: TDD: Test 2 para ajustar hora (falla compilacion)
+[33mbb2f506[m HEAD@{13}: commit (amend): TDD: Test 1 (reloj_inicia_invalido)
+[33md544621[m HEAD@{14}: commit: Fix: Enlazado el submódulo muJu con su ícono y puntero oficial
+[33m00d4c87[m HEAD@{15}: commit: Fix: Agregado e inicializado el submódulo muJu oficialmente
+[33mfce60f9[m HEAD@{16}: commit (initial): Lab6EIV

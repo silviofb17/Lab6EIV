@@ -283,7 +283,7 @@ int main(void) {
                 if (DigitalInputHasActivate(board->f3)) {
                     cont_inactividad = 0;
                     if (hora_ajuste[1] == 0) {
-                        if (hora_ajuste[0] == 0) { Develop: hora_ajuste[0] = 2; hora_ajuste[1] = 3; }
+                        if (hora_ajuste[0] == 0) {hora_ajuste[0] = 2; hora_ajuste[1] = 3; }
                         else { hora_ajuste[0]--; hora_ajuste[1] = 9; }
                     } else { hora_ajuste[1]--; }
                 }
@@ -306,7 +306,6 @@ int main(void) {
         hora_t alarma_real;
         GetAlarmTime(reloj, alarma_real);
 
-        // CORRECCIÓN CLAVE: memcmp con '6' para evaluar también segundos exactos
         if (IsAlarmEnabled(reloj) && (memcmp(hora_actual, alarma_real, 6) == 0) && !alarma_pospuesta) { 
             if (!alarma_sonando) {
                 alarma_sonando = true;  
@@ -321,13 +320,11 @@ int main(void) {
                 alarma_sonando = false; 
                 DigitalOutputDeactivate(board->buzzer);
 
-                // Tomamos la hora real exacta (incluye los segundos de la presión)
                 GetCurrentTime(reloj, alarma_real);
 
                 int horas_enteras = (alarma_real[0] * 10) + alarma_real[1];
                 int minutos_enteros = (alarma_real[2] * 10) + alarma_real[3];
                 
-                // Sumamos 5 minutos sobre la hora de la presión
                 minutos_enteros += 5;
                 if (minutos_enteros >= 60) {
                     minutos_enteros -= 60;
@@ -342,8 +339,6 @@ int main(void) {
                 alarma_real[2] = minutos_enteros / 10;
                 alarma_real[3] = minutos_enteros % 10;
 
-                // MANTENEMOS los segundos exactos de la presión en alarma_real[4] y [5]
-                // para que la coincidencia futura sea matemáticamente perfecta al segundo
                 SetAlarmTime(reloj, alarma_real);
             }
             if (tecla_cancelar_activa) { 
