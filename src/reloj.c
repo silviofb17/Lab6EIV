@@ -48,8 +48,10 @@ SPDX-License-Identifier: MIT
 struct clock_s {
     clock_time_t current_time;
     clock_time_t alarm_time;
+    clock_time_t postponed_time;
     bool valid_time;
-    bool alarm_enabled;       
+    bool alarm_enabled; 
+    bool is_postponed;
     uint16_t ticks_per_second; 
     uint16_t tick_counter;    
     clock_event_handler_t alarm_handler;
@@ -61,16 +63,18 @@ struct clock_s {
 
 /* === Public function implementation ========================================================== */
 
-clock_t RelojCreate(uint16_t ticks_por_segundo, clock_event_handler_t callback){
+clock_t RelojCreate(uint16_t ticks_por_segundo, clock_event_handler_t callback) {
     clock_t self = malloc(sizeof(struct clock_s));
-    if(self != NULL){
+    if (self != NULL) {
         self->valid_time = false;
         self->alarm_enabled = false; 
+        self->is_postponed = false;
         self->ticks_per_second = ticks_por_segundo;
         self->tick_counter = 0;                    
         self->alarm_handler = callback;
         memset(&(self->current_time), 0, sizeof(clock_time_t));
         memset(&(self->alarm_time), 0, sizeof(clock_time_t));
+        memset(&(self->postponed_time), 0, sizeof(clock_time_t));
     }
     return self;
 }
@@ -112,7 +116,11 @@ void ClockTick(clock_t reloj) {
         reloj->tick_counter = 0;
 
         if (reloj->alarm_enabled && reloj->alarm_handler != NULL) {
-            if (memcmp(reloj->current_time.bcd, reloj->alarm_time.bcd, sizeof(hora_t)) == 0) {
+    
+            clock_time_t * hora_a_comparar = reloj->is_postponed ? &reloj->postponed_time : &reloj->alarm_time;
+
+            if (memcmp(reloj->current_time.bcd, hora_a_comparar->bcd, sizeof(clock_time_t)) == 0) {
+                reloj->is_postponed = false;
                 reloj->alarm_handler(reloj); 
             }
         }
@@ -181,35 +189,38 @@ bool IsAlarmEnabled(clock_t reloj) {
 }
 
 bool PostponeAlarm(clock_t reloj, uint8_t minutos) {
-    if (reloj == NULL || minutos == 0) {
+    if (reloj == NULL || minutos == 0 || !reloj->alarm_enabled) {
         return false;
     }
+
+    reloj->postponed_time = reloj->current_time;
 
     uint8_t min_unidades = minutos % 10;
     uint8_t min_decenas = minutos / 10;
 
-    reloj->alarm_time.bcd[3] += min_unidades;
-    if (reloj->alarm_time.bcd[3] > 9) {
-        reloj->alarm_time.bcd[3] -= 10;
-        reloj->alarm_time.bcd[2]++;
+    reloj->postponed_time.bcd[3] += min_unidades;
+    if (reloj->postponed_time.bcd[3] > 9) {
+        reloj->postponed_time.bcd[3] -= 10;
+        reloj->postponed_time.bcd[2]++;
     }
 
-    reloj->alarm_time.bcd[2] += min_decenas;
-    if (reloj->alarm_time.bcd[2] > 5) {
-        reloj->alarm_time.bcd[2] -= 6;
-        reloj->alarm_time.bcd[1]++; 
+    reloj->postponed_time.bcd[2] += min_decenas;
+    if (reloj->postponed_time.bcd[2] > 5) {
+        reloj->postponed_time.bcd[2] -= 6;
+        reloj->postponed_time.bcd[1]++;
 
-        if (reloj->alarm_time.bcd[1] > 9) {
-            reloj->alarm_time.bcd[1] = 0;
-            reloj->alarm_time.bcd[0]++; 
+        if (reloj->postponed_time.bcd[1] > 9) {
+            reloj->postponed_time.bcd[1] = 0;
+            reloj->postponed_time.bcd[0]++;
         }
     }
 
-    if (reloj->alarm_time.bcd[0] == 2 && reloj->alarm_time.bcd[1] == 4) {
-        reloj->alarm_time.bcd[0] = 0;
-        reloj->alarm_time.bcd[1] = 0;
+    if (reloj->postponed_time.bcd[0] == 2 && reloj->postponed_time.bcd[1] == 4) {
+        reloj->postponed_time.bcd[0] = 0;
+        reloj->postponed_time.bcd[1] = 0;
     }
 
+    reloj->is_postponed = true;
     return true;
 }
 

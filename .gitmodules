@@ -1,3 +1,6 @@
 [submodule "PLACAEIV"]
 	path = PLACAEIV
 	url = https://github.com/labmicro/muju.git
+[submodule "muju"]
+	path = muju
+	url = https://github.com/labmicro/muju.git

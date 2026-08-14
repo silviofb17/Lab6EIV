@@ -1,5 +1,5 @@
-# Trabajo Práctico N°7
+# Trabajo Práctico N°8
 
 Alumno: Barraza, Silvio Fernando
 Materia: Electrónica IV
-Descripción: Este repositorio corresponde al trabajo práctico N°7.
+Descripción: Este repositorio corresponde al trabajo práctico N°8.

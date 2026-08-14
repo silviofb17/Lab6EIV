@@ -3,8 +3,10 @@
 #include <stdbool.h>  
 #include <stdint.h>
 
+static bool alarma_activada = false;
+
 static const hora_t INITIAL_TIME = {0, 0, 0, 0, 0, 0};
-//TEST 1- Al iniciar el reloj esta en 00:00 y con hora invsalida
+//TEST 1- Al iniciar el reloj esta en 00:00 y con hora invalida
 void test_reloj_inicial_invalido(void){
     clock_t reloj;  
     hora_t hora_actual = {1, 2, 3, 4, 5, 6};
@@ -144,7 +146,7 @@ static int alarma_sonada_veces = 0;
 
 // Función Callback de mentira para el entorno de pruebas
 void MiCallbackAlarma(clock_t reloj) {
-    (void)reloj;
+    alarma_activada = true;
     alarma_sonada_veces++;
 }
 
@@ -184,23 +186,30 @@ void test_alarma_deshabilitada_y_coincide_no_dispara_callback(void) {
     TEST_ASSERT_EQUAL_INT(0, alarma_sonada_veces);
 }
 
-// TEST 10- Se puede posponer la alarma por una cantidad de minutos determinada.
+// Test 10: Se puede posponer la alarma sin alterar la hora de alarma original
 void test_posponer_alarma_minutos(void) {
     clock_t reloj;
     hora_t alarma_consultada;
 
-    uint8_t hora_inicial[6]    = {0, 7, 3, 0, 0, 0}; // 07:30:00
-    uint8_t alarma_esperada[6] = {0, 7, 3, 5, 0, 0}; // Pospuesta 5 minutos -> 07:35:00
+    uint8_t hora_inicial[6]  = {0, 7, 3, 0, 0, 0}; // 07:30:00
+    uint8_t hora_original[6] = {0, 7, 3, 0, 0, 0}; // 07:30:00
 
+    // Creamos reloj y seteamos hora y alarma a las 07:30:00
     reloj = RelojCreate(1, MiCallbackAlarma);
     SetCurrentTime(reloj, hora_inicial);
     SetAlarmTime(reloj, hora_inicial);
     SetAlarmEnabled(reloj, true);
 
-    // Posponemos la alarma 5 minutos (esto va a fallar la compilación porque no existe la función)
+    // Posponemos 5 minutos
     bool postpone_ok = PostponeAlarm(reloj, 5);
     TEST_ASSERT_TRUE(postpone_ok);
 
     GetAlarmTime(reloj, alarma_consultada);
-    TEST_ASSERT_EQUAL_UINT8_ARRAY(alarma_esperada, alarma_consultada, 6);
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(hora_original, alarma_consultada, 6);
+
+    for (int i = 0; i < 300; i++) {
+        ClockTick(reloj);
+    }
+
+    TEST_ASSERT_TRUE(alarma_activada);
 }
