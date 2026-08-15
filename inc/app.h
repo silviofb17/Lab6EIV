@@ -1,28 +1,36 @@
 #ifndef APP_H_
 #define APP_H_
 
-#include "bsp.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "event_groups.h"
+#include "queue.h"
 #include "reloj.h"
+#include "bsp.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#define CLOCK_TASK_STACK_SIZE 512
+
 /**
- * @brief Inicializa la aplicación del reloj
- * @param board Puntero a la abstracción de la placa
+ * @brief Argumentos para la tarea de la aplicación del reloj
+ */
+typedef struct clock_task_args_s {
+    EventGroupHandle_t events;    /* Grupo de eventos de las teclas */
+    board_t board;                /* Descriptor de la placa EDU-CIAA */
+} * clock_task_args_t;
+
+/**
+ * @brief Inicializa el módulo de la aplicación
  */
 void AppInit(board_t board);
 
 /**
- * @brief Procesa un tick de tiempo (debe ser llamado periódicamente desde SysTick o main)
+ * @brief Tarea principal de FreeRTOS que ejecuta la máquina de estados del reloj
  */
-void AppTick(void);
-
-/**
- * @brief Ejecuta la tarea principal de la máquina de estados
- */
-void AppTask(void);
+void AppTask(void * args);
 
 #ifdef __cplusplus
 }

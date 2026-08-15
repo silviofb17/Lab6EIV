@@ -1,14 +1,6 @@
-MODULES = hal src
-
-INCLUDES = inc
-
-BOARD ?= edu-ciaa-nxp
-VERBOSE = n
-MUJU ?= ./muju
-DOC_DIR = ./build/doc
-
+ROOT := .
+BOARD := edu-ciaa-nxp
+MUJU := $(ROOT)/muju
+MODULES := hal module/freertos
+BUILD_DIR := $(ROOT)/build
 include $(MUJU)/module/base/makefile
-
-doc:
-	@mkdir -p $(DOC_DIR)
-	doxygen doxyfile
